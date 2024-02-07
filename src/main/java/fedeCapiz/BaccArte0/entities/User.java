@@ -40,16 +40,17 @@ public class User implements UserDetails {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
+    //RELAZIONE CON BOTTTLE
+    @OneToMany(mappedBy = "user")
+    private List<Bottle> bottles;
+
     /*
         //RELAZIONE CON ORDER
         @OneToMany(mappedBy = "user")
         private List<Payment> payments;
-
-        //RELAZIONE CON BOTTTLE
-        @OneToMany(mappedBy = "user")
-        private List<Bottle> bottles;
-
      */
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(typeOfUser.name()));

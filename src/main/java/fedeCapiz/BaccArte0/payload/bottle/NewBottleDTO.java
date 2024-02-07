@@ -17,8 +17,6 @@ public record NewBottleDTO (
          String bottigliCompleta,
          @NotEmpty(message = "Fornisci una foto dell'immagine dello logo user")
          String logoUser
-       /*  @NotNull(message = "L'id dell'utente è obbligatorio")
-        User userId*/
 
 ){
 }
