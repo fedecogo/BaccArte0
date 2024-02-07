@@ -34,6 +34,7 @@ public class AuthService {
     @Autowired
     private JWTTools jwtTools;
 
+    //registrazione
     public NewUserResponseDTO save(NewUserDTO body) throws BadRequestException {
         try {
             Optional<User> found = usersDAO.findByEmail(body.email());
@@ -51,7 +52,7 @@ public class AuthService {
         newUser.setPassword(bcrypt.encode(body.password()));
         newUser.setAvatar("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTFKYn65xn1DBoxENqRfmw7gYoInFtNidmgEDJYfVSgg&s");
         newUser.setPhoneNumber(body.phoneNumber());
-        newUser.setTypeOfUser(TypeOfUser.USER);
+        newUser.setTypeOfUser(TypeOfUser.ADMIN);
         newUser.setCart(newCart);
         usersDAO.save(newUser);
         return new NewUserResponseDTO(newUser.getId());
@@ -63,7 +64,7 @@ public class AuthService {
         }
 
     }
-
+    //login
 
     public String authenticateUser(UserLoginDTO body) {
         System.out.println(body.email() + body.password());
