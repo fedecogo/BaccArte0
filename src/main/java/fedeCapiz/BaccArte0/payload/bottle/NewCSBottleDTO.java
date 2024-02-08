@@ -1,5 +1,6 @@
 package fedeCapiz.BaccArte0.payload.bottle;
 
+import fedeCapiz.BaccArte0.entities.Artist;
 import fedeCapiz.BaccArte0.entities.BottleContents;
 import fedeCapiz.BaccArte0.entities.SizeBottle;
 import jakarta.persistence.Enumerated;
@@ -12,8 +13,8 @@ public record NewCSBottleDTO(
         SizeBottle sizeBottle,
         @NotNull(message = "E' obbligatorio scegliere il distillato desiderato")
         BottleContents bottleContents,
-        @NotEmpty(message = "Fornisci una foto dell'immagine dello logo user")
-        MultipartFile logoUser
+        Artist artist
+
 
 ) {
 }

@@ -1,6 +1,5 @@
 package fedeCapiz.BaccArte0.service;
 
-import fedeCapiz.BaccArte0.entities.Order;
 import fedeCapiz.BaccArte0.entities.Cart;
 import fedeCapiz.BaccArte0.entities.TypeOfUser;
 import fedeCapiz.BaccArte0.entities.User;

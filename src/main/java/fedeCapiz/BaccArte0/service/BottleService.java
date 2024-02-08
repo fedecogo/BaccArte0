@@ -16,8 +16,10 @@ import fedeCapiz.BaccArte0.repositories.BottleDAO;
 import fedeCapiz.BaccArte0.repositories.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class BottleService {
@@ -36,9 +38,7 @@ public class BottleService {
     newBottle.setBottleContents(body.bottleContents());
     newBottle.setPrice(body.price());
     newBottle.setBottigliCompleta("https://globaluserfiles.com/media/132217_0528c33e6de48810a996f76c6553fe7ac98574df.png/v1/w_0,h_441/mani%20mock%20up%20gin%20x%20sito.png");
-   /*  newBottle.setLogoUser("no logo custom per questa bottiglia");
-    // troviamo user che ha creato questa bottiglia
-    //prova non definitiva*/
+    // troviamo user che ha creato questa bottiglia, questo metodo saveBottle lo puo fare solo oliver(per velocità ci metto già il suo id)
     Long userId = Long.valueOf(8);
     User found = userDAO.findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
     newBottle.setUser(found);
@@ -47,29 +47,12 @@ public class BottleService {
     return new NewBottleResponseDTO(newBottle.getId_bottle());
 }
 
-//save custum bottle
-    public NewCSBottleResponseDTO saveCustomBottle(NewCSBottleDTO body) throws IOException {
-    Bottle newBottle = new Bottle();
-    newBottle.setSizeBottle(body.sizeBottle());
-    newBottle.setBottleContents(body.bottleContents());
-        if (newBottle.getSizeBottle() == SizeBottle.DIECI_CL) {
-            if (newBottle.getBottleContents() == BottleContents.RED_BERRY_GIN) {
-                newBottle.setPrice(5);
-            } else if (newBottle.getBottleContents() == BottleContents.ITALIAN_BOUQUET) {
-                newBottle.setPrice(5);
-            }
-        } else if (newBottle.getSizeBottle() == SizeBottle.SETTANTA_CL) {
-            if (newBottle.getBottleContents() == BottleContents.RED_BERRY_GIN) {
-                newBottle.setPrice(40);
-            } else if (newBottle.getBottleContents() == BottleContents.ITALIAN_BOUQUET) {
-                newBottle.setPrice(40);
-            }
+    // salvo l'immagine nel avatar dello user
+  public String saveImage(MultipartFile file,Long id) throws IOException {
+   User found = userDAO.findById(id).orElseThrow(() -> new NotFoundException("user not found with id: " + id));
+            String url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+            found.setAvatar(url);
+            userDAO.save(found);
+            return url;
         }
-
-   String url = (String) cloudinary.uploader().upload(body.logoUser().getBytes(), ObjectUtils.emptyMap()).get("url");
-   newBottle.setLogoUser(url);
-   return new NewCSBottleResponseDTO();
-
-    }
-
- }
+}
