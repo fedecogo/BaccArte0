@@ -54,5 +54,8 @@ public class BottleService {
             found.setAvatar(url);
             userDAO.save(found);
             return url;
-        }
+    }
+    public List<Bottle> getAllMyBottles(Long userId) {
+        return bottleDAO.findByUserId(userId);
+    }
 }

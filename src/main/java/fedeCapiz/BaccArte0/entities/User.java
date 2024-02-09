@@ -1,5 +1,6 @@
 package fedeCapiz.BaccArte0.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,7 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table(name = "users")
-@JsonIgnoreProperties({"password",/*"cart","payments","bottles"*/"authorities", "accountNonExpired", "enabled", "accountNonLocked", "credentialsNonExpired", "username"})
+@JsonIgnoreProperties({"password","cart",/*"payments","bottles"*/"authorities", "accountNonExpired", "enabled", "accountNonLocked", "credentialsNonExpired", "username"})
 
 public class User implements UserDetails {
     @Id
@@ -42,8 +43,8 @@ public class User implements UserDetails {
 
     //RELAZIONE CON BOTTTLE
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Bottle> bottles;
-
     /*
         //RELAZIONE CON ORDER
         @OneToMany(mappedBy = "user")

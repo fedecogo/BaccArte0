@@ -54,10 +54,8 @@ public class UserController {
     }
     // metodo che mostratta tutte le bottigllie del singolo utente
     @GetMapping("/me/allMyBottles")
-    public List<Bottle> getAllMyBottles(@AuthenticationPrincipal User id) {
-        User found = userDAO.findById(id.getId()).orElseThrow(() -> new NotFoundException("User not found with id: " + id.getId()));
-        Long userId = Long.valueOf(found.getId());
-        return bottleService.getAllMyBottles(userId);
+    public List<Bottle> getAllMyBottles(@AuthenticationPrincipal User user) {
+        return bottleService.getAllMyBottles(user.getId());
     }
 
 
