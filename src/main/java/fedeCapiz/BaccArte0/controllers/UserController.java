@@ -6,11 +6,12 @@ import fedeCapiz.BaccArte0.exceptions.BadRequestException;
 import fedeCapiz.BaccArte0.exceptions.NotFoundException;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleResponseDTO;
+import fedeCapiz.BaccArte0.payload.cart.AddToCartDTO;
+import fedeCapiz.BaccArte0.payload.cart.AddToCartResponseDTO;
 import fedeCapiz.BaccArte0.repositories.UserDAO;
 import fedeCapiz.BaccArte0.service.BottleService;
 import fedeCapiz.BaccArte0.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -28,7 +29,6 @@ public class UserController {
     private UserService userService;
     @Autowired
     private BottleService bottleService;
-
     @Autowired
     private UserDAO userDAO;
 
@@ -41,9 +41,9 @@ public class UserController {
         return bottleService.saveImage(file, userId );
     }
     // crera una bottiglia custum con l'avatar
-    @PostMapping("/me/crateYourBottle")
+    @PostMapping("/me/createYourBottle")
     @ResponseStatus(HttpStatus.CREATED)
-    public NewCSBottleResponseDTO crateYourBottle(@RequestBody @Validated NewCSBottleDTO newCSBottleDTO, BindingResult validation,@AuthenticationPrincipal User id) throws BadRequestException, IOException {
+    public NewCSBottleResponseDTO createYourBottle(@RequestBody @Validated NewCSBottleDTO newCSBottleDTO, BindingResult validation,@AuthenticationPrincipal User id) throws BadRequestException, IOException {
         System.out.println(validation);
         if (validation.hasErrors()) {
             System.out.println(validation.getAllErrors());
@@ -58,5 +58,11 @@ public class UserController {
         return bottleService.getAllMyBottles(user.getId());
     }
 
+    // Aggiunge una bottiglia al carrello
+    @PostMapping("/me/cart/addBottle")
+    @ResponseStatus(HttpStatus.OK)
+    public AddToCartResponseDTO addBottleToCart(@RequestBody AddToCartDTO body,@AuthenticationPrincipal User id) {
+        return userService.addBottleToCart(body, id.getId(), body.bottleId());
+    }
 
 }

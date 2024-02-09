@@ -26,6 +26,7 @@ public class Bottle {
     private double price;
     private String bottigliCompleta;
     private String logoUser;
+    private boolean isCustom;
 
 
     //relazione con user, bottiglia creata da questo user

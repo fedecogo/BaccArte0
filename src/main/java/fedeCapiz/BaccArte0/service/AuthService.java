@@ -27,7 +27,7 @@ public class AuthService {
     @Autowired
     private OrderDAO orderDAO;
     @Autowired
-    private UserDAO usersDAO;
+    private UserDAO userDAO;
     @Autowired
     private PasswordEncoder bcrypt;
     @Autowired
@@ -35,14 +35,12 @@ public class AuthService {
 
     //registrazione
     public NewUserResponseDTO save(NewUserDTO body) throws BadRequestException {
-        try {
-            Optional<User> found = usersDAO.findByEmail(body.email());
-            if (found.isEmpty()) {
-     /*   Order newOrder = new Order();
-        orderDAO.save(newOrder);*/
-        Cart newCart = new Cart();
-/*        newCart.setOrder(newOrder);*/
-        cartDAO.save(newCart);
+        Optional<User> found = userDAO.findByEmail(body.email());
+        if (found.isPresent()) {
+            throw new BadRequestException("Email già utilizzata!");
+        }
+
+        // Crea un nuovo utente
         User newUser = new User();
         newUser.setName(body.name());
         newUser.setSurname(body.surname());
@@ -51,17 +49,20 @@ public class AuthService {
         newUser.setPassword(bcrypt.encode(body.password()));
         newUser.setAvatar("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTFKYn65xn1DBoxENqRfmw7gYoInFtNidmgEDJYfVSgg&s");
         newUser.setPhoneNumber(body.phoneNumber());
-        newUser.setTypeOfUser(TypeOfUser.ADMIN);
-        newUser.setCart(newCart);
-        usersDAO.save(newUser);
-        return new NewUserResponseDTO(newUser.getId());
-            } else {
-                throw new BadRequestException("L'email " + body.email() + " è già in uso!");
-            }
-        } catch (RuntimeException e) {
-            throw new BadRequestException("L'email " + body.email() + " è già in uso!");
-        }
+        newUser.setTypeOfUser(TypeOfUser.USER);
 
+
+        // Salva il nuovo utente nel database
+        User savedUser = userDAO.save(newUser);
+
+        // Crea un nuovo carrello e associa l'utente ad esso
+        Cart newCart = new Cart();
+        newCart.setUser(savedUser);
+        cartDAO.save(newCart);
+        newUser.setCart(newCart);
+        userDAO.save(newUser);
+        // Ritorna la risposta contenente l'ID del nuovo utente
+        return new NewUserResponseDTO(savedUser.getId());
     }
     //login
 

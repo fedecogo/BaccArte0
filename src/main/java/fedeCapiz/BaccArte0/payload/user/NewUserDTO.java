@@ -1,5 +1,6 @@
 package fedeCapiz.BaccArte0.payload.user;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,16 +11,12 @@ public record NewUserDTO(
         String surname,
         @NotEmpty(message = "Lo username è obbligatorio")
         String username,
-        @NotEmpty(message = "l'email è obbligatoria")
+        @Email(message = "l'email è obbligatoria")
         String email,
         @NotEmpty(message = "La password è obbligatoria")
         String password,
-        @NotNull(message = "Il nu di telefono �� obbligatorio")
+        @NotNull(message = "Il numero di telefono è obbligatorio")
         Long phoneNumber
-
-
-
-
 
 ) {
 }
