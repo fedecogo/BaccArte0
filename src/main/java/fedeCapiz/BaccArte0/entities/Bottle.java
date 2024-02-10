@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class Bottle {
     private String bottigliCompleta;
     private String logoUser;
     private boolean isCustom;
+    private boolean isCSDeleted;
 
 
     //relazione con user, bottiglia creata da questo user

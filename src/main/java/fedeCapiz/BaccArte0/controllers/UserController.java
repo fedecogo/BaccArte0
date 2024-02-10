@@ -4,10 +4,15 @@ import fedeCapiz.BaccArte0.entities.Bottle;
 import fedeCapiz.BaccArte0.entities.User;
 import fedeCapiz.BaccArte0.exceptions.BadRequestException;
 import fedeCapiz.BaccArte0.exceptions.NotFoundException;
+import fedeCapiz.BaccArte0.payload.bottle.DeleteCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleResponseDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartResponseDTO;
+import fedeCapiz.BaccArte0.payload.user.DeleteUserDTO;
+import fedeCapiz.BaccArte0.payload.user.DeleteUserResponseDTO;
+import fedeCapiz.BaccArte0.payload.user.UpdateUserInfoDTO;
+import fedeCapiz.BaccArte0.payload.user.UpdateUserInfoResponseDTO;
 import fedeCapiz.BaccArte0.repositories.UserDAO;
 import fedeCapiz.BaccArte0.service.BottleService;
 import fedeCapiz.BaccArte0.service.UserService;
@@ -52,6 +57,13 @@ public class UserController {
             return userService.saveCustomBottle(newCSBottleDTO,id.getId());
         }
     }
+    @PostMapping("/me/deleteYourBottle")
+    @ResponseStatus(HttpStatus.OK)
+    public DeleteUserResponseDTO deleteYourBottle(@RequestBody @Validated DeleteCSBottleDTO body, @AuthenticationPrincipal User id) throws NotFoundException {
+        return userService.deleteCustomBottle( id.getId(), body.bottleId());
+    }
+
+
     // metodo che mostratta tutte le bottigllie del singolo utente
     @GetMapping("/me/allMyBottles")
     public List<Bottle> getAllMyBottles(@AuthenticationPrincipal User user) {
@@ -64,5 +76,17 @@ public class UserController {
     public AddToCartResponseDTO addBottleToCart(@RequestBody AddToCartDTO body,@AuthenticationPrincipal User id) {
         return userService.addBottleToCart(body, id.getId(), body.bottleId());
     }
-
+    // metodo che elimina uno user
+    @PatchMapping("/me/deleteAccount")
+    @ResponseStatus(HttpStatus.OK)
+    public DeleteUserResponseDTO deleteAccount(@AuthenticationPrincipal User user, @RequestBody DeleteUserDTO body) {
+        userService.deleteUser(user.getId(),body);
+        return new DeleteUserResponseDTO("Utente eliminato correttamente1");
+    }
+    @PostMapping("/me/updateUserInfo")
+    @ResponseStatus(HttpStatus.OK)
+    public UpdateUserInfoResponseDTO updateUserInfo(@AuthenticationPrincipal User user, @RequestBody UpdateUserInfoDTO body) throws NotFoundException {
+        userService.updateUserInfo(user.getId(),body);
+        return new UpdateUserInfoResponseDTO("Utente aggiornato correttamente1");
+    }
 }

@@ -2,10 +2,15 @@ package fedeCapiz.BaccArte0.service;
 
 import fedeCapiz.BaccArte0.entities.*;
 import fedeCapiz.BaccArte0.exceptions.NotFoundException;
+import fedeCapiz.BaccArte0.payload.bottle.DeleteCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleResponseDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartResponseDTO;
+import fedeCapiz.BaccArte0.payload.user.DeleteUserDTO;
+import fedeCapiz.BaccArte0.payload.user.DeleteUserResponseDTO;
+import fedeCapiz.BaccArte0.payload.user.UpdateUserInfoDTO;
+import fedeCapiz.BaccArte0.payload.user.UpdateUserInfoResponseDTO;
 import fedeCapiz.BaccArte0.repositories.BottleDAO;
 import fedeCapiz.BaccArte0.repositories.CartDAO;
 import fedeCapiz.BaccArte0.repositories.UserDAO;
@@ -31,17 +36,18 @@ public class UserService {
     }
 
     public User findById(long id) {
-        return userDAO.findById(id).orElseThrow(() -> new NotFoundException(id));
+        return userDAO.findById(id).orElseThrow(() -> new NotFoundException("User not found with this id:" + id));
     }
     public User findByEmail(String email) throws NotFoundException {
-        return userDAO.findByEmail(email).orElseThrow(() -> new NotFoundException("Utente con email " + email + " non trovata!"));
+        return userDAO.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found with this email:" + email));
     }
 
 
-    //save custum bottle
+    //SAVE CUSTUM BOTTLE
     public NewCSBottleResponseDTO saveCustomBottle(NewCSBottleDTO body, Long userID) throws IOException {
         Bottle newBottle = new Bottle();
         newBottle.setCustom(true);
+        newBottle.setCSDeleted(false);
         newBottle.setSizeBottle(body.sizeBottle());
         newBottle.setBottleContents(body.bottleContents());
         if (newBottle.getSizeBottle() == SizeBottle.DIECI_CL) {
@@ -57,7 +63,7 @@ public class UserService {
                 newBottle.setPrice(40);
             }
         }
-        User found = userDAO.findById(userID).orElseThrow(() -> new NotFoundException("User not found with"));
+        User found = userDAO.findById(userID).orElseThrow(() -> new NotFoundException("User not found with id:"+userID));
         newBottle.setLogoUser(found.getAvatar());
         newBottle.setUser(found);
        /* if(body.artist() != null ){*/
@@ -66,12 +72,29 @@ public class UserService {
         return new NewCSBottleResponseDTO(newBottle.getId_bottle());
 
     }
-    //metodo che aggiunge una bottiglia al carello
 
+    //DELETE CUSTUM BOTTLE
+    public DeleteUserResponseDTO deleteCustomBottle( Long userID, Long bottleId) {
+        User user = userDAO.findById(userID).orElseThrow(() -> new NotFoundException("User not found with id : " + userID));
+        Bottle bottle = bottleDAO.findById(bottleId).orElseThrow(() -> new NotFoundException("Bottle not found with id: " + bottleId));
+        if(bottle.getUser().getId() == user.getId()) {
+            bottle.setCSDeleted(true);
+            bottleDAO.save(bottle);
+            return new DeleteUserResponseDTO("You have deleted the custom bottle");
+        }else if(bottle.isCSDeleted()){
+            return new DeleteUserResponseDTO("This custom bottle has already been deleted");
+        }else {
+            return new DeleteUserResponseDTO("You are not the owner of this custom bottle");
+        }
+
+    }
+
+
+    //ADD BOTTLE TO CART
     public AddToCartResponseDTO addBottleToCart(AddToCartDTO body, Long userId, Long bottleId) {
-        User user = userDAO.findById(userId).orElseThrow(() -> new NotFoundException("Utente non trovato con ID: " + userId));
+        User user = userDAO.findById(userId).orElseThrow(() -> new NotFoundException("User not found with id : " + userId));
         Cart cart = user.getCart();
-        Bottle bottle = bottleDAO.findById(bottleId).orElseThrow(() -> new NotFoundException("Bottiglia non trovata con ID: " + bottleId));
+        Bottle bottle = bottleDAO.findById(bottleId).orElseThrow(() -> new NotFoundException("Bottle not found with id: " + bottleId));
         //se la bottiglia è custom
         if (bottle.isCustom()) {
             //prezzo in base alla dimensione della bottiglia e al contenuto
@@ -100,6 +123,46 @@ public class UserService {
             cart.getBottles().add(bottle);
         }
         cartDAO.save(cart);
-       return new AddToCartResponseDTO();
+       return new AddToCartResponseDTO(cart.getTotCartPrice());
+    }
+
+
+
+    //DELETE USER
+    //metodo che prende lo user e gli dice che il suo account è stato eliminato
+    //anche se in realtà setta soltanto lo user con un boolean eliminato , nel caso si volesse recuperare l'account.
+    public DeleteUserResponseDTO deleteUser(Long id, DeleteUserDTO body) throws NotFoundException {
+        if (body.doYouWantDeleteYourAccount()) {
+            User user = userDAO.findById(id).orElseThrow(() -> new NotFoundException("Utente non trovato con ID: " + id));
+            user.setAccountDeleted(true);
+            userDAO.save(user);
+            //eliminare il token del local storage
+            return new DeleteUserResponseDTO("Utente eliminato correttamente2");
+        }else {
+            return new DeleteUserResponseDTO("Utente non eliminato ");
+        }
+    }
+
+
+    //UPDATE USER INFO
+    public UpdateUserInfoResponseDTO updateUserInfo(Long id, UpdateUserInfoDTO body) throws NotFoundException {
+        User user = userDAO.findById(id).orElseThrow(() -> new NotFoundException("Utente non trovato con ID: " + id));
+        if(body.name()!= null) {
+            user.setName(body.name());
+        }
+        if(body.surname()!= null) {
+            user.setSurname(body.surname());
+        }
+        if(body.username()!= null) {
+            user.setUsername(body.username());
+        }
+        if(body.email()!= null) {
+            user.setEmail(body.email());
+        }
+        if(body.phoneNumber()!= null) {
+            user.setPhoneNumber(body.phoneNumber());
+        }
+       userDAO.save(user);
+        return new UpdateUserInfoResponseDTO("User info updated");
     }
 }

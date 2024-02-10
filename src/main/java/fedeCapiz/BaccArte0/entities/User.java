@@ -35,6 +35,7 @@ public class User implements UserDetails {
     private Long phoneNumber;
     @Enumerated(EnumType.STRING)
     private TypeOfUser typeOfUser;
+    private boolean accountDeleted;
 
 
     @OneToOne
@@ -85,4 +86,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
+
 }

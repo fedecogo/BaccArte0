@@ -49,8 +49,8 @@ public class AuthService {
         newUser.setPassword(bcrypt.encode(body.password()));
         newUser.setAvatar("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTFKYn65xn1DBoxENqRfmw7gYoInFtNidmgEDJYfVSgg&s");
         newUser.setPhoneNumber(body.phoneNumber());
-        newUser.setTypeOfUser(TypeOfUser.USER);
-
+        newUser.setTypeOfUser(TypeOfUser.ADMIN);
+        newUser.setAccountDeleted(false);
 
         // Salva il nuovo utente nel database
         User savedUser = userDAO.save(newUser);
@@ -61,14 +61,17 @@ public class AuthService {
         cartDAO.save(newCart);
         newUser.setCart(newCart);
         userDAO.save(newUser);
-        // Ritorna la risposta contenente l'ID del nuovo utente
+        // Ritorna la risposta con l'ID
         return new NewUserResponseDTO(savedUser.getId());
     }
+
     //login
 
-    public String authenticateUser(UserLoginDTO body) {
-        System.out.println(body.email() + body.password());
+    public String authenticateUser(UserLoginDTO body) throws BadRequestException {
         User user = usersService.findByEmail(body.email());
+        if (user.isAccountDeleted()) {
+            throw new UnauthorizedException("Hai eliminato il tuo account");
+        }
         if (bcrypt.matches(body.password(), user.getPassword())) {
             return jwtTools.createToken(user);
         } else {

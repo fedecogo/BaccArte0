@@ -34,6 +34,7 @@ public class BottleService {
     //Save NORMAL BOTTLE
     public NewBottleResponseDTO saveBottle(NewBottleDTO body) {
     Bottle newBottle = new Bottle();
+    newBottle.setCSDeleted(false);
     newBottle.setSizeBottle(body.sizeBottle());
     newBottle.setBottleContents(body.bottleContents());
     newBottle.setPrice(body.price());
@@ -59,4 +60,6 @@ public class BottleService {
     public List<Bottle> getAllMyBottles(Long userId) {
         return bottleDAO.findByUserId(userId);
     }
+
+
 }

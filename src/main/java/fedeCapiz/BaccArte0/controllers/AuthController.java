@@ -1,4 +1,5 @@
 package fedeCapiz.BaccArte0.controllers;
+import fedeCapiz.BaccArte0.entities.User;
 import fedeCapiz.BaccArte0.exceptions.BadRequestException;
 import fedeCapiz.BaccArte0.payload.login.UserLoginDTO;
 import fedeCapiz.BaccArte0.payload.login.UserLoginResponseDTO;
@@ -35,4 +36,5 @@ public class AuthController {
             return authService.save(newUserPayload);
         }
     }
+
 }
