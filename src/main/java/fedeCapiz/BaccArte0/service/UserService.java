@@ -3,6 +3,7 @@ package fedeCapiz.BaccArte0.service;
 import fedeCapiz.BaccArte0.entities.*;
 import fedeCapiz.BaccArte0.exceptions.NotFoundException;
 import fedeCapiz.BaccArte0.payload.bottle.DeleteCSBottleDTO;
+import fedeCapiz.BaccArte0.payload.bottle.DeleteCSBottleResponseDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleResponseDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartDTO;
@@ -74,17 +75,17 @@ public class UserService {
     }
 
     //DELETE CUSTUM BOTTLE
-    public DeleteUserResponseDTO deleteCustomBottle( Long userID, Long bottleId) {
+    public DeleteCSBottleResponseDTO deleteCustomBottle(Long userID, Long bottleId) {
         User user = userDAO.findById(userID).orElseThrow(() -> new NotFoundException("User not found with id : " + userID));
         Bottle bottle = bottleDAO.findById(bottleId).orElseThrow(() -> new NotFoundException("Bottle not found with id: " + bottleId));
         if(bottle.getUser().getId() == user.getId()) {
             bottle.setCSDeleted(true);
             bottleDAO.save(bottle);
-            return new DeleteUserResponseDTO("You have deleted the custom bottle");
+            return new DeleteCSBottleResponseDTO("You have deleted the custom bottle");
         }else if(bottle.isCSDeleted()){
-            return new DeleteUserResponseDTO("This custom bottle has already been deleted");
+            return new DeleteCSBottleResponseDTO("This custom bottle has already been deleted");
         }else {
-            return new DeleteUserResponseDTO("You are not the owner of this custom bottle");
+            return new DeleteCSBottleResponseDTO("You are not the owner of this custom bottle");
         }
 
     }

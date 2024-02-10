@@ -5,6 +5,7 @@ import fedeCapiz.BaccArte0.entities.User;
 import fedeCapiz.BaccArte0.exceptions.BadRequestException;
 import fedeCapiz.BaccArte0.exceptions.NotFoundException;
 import fedeCapiz.BaccArte0.payload.bottle.DeleteCSBottleDTO;
+import fedeCapiz.BaccArte0.payload.bottle.DeleteCSBottleResponseDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleResponseDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartDTO;
@@ -59,7 +60,7 @@ public class UserController {
     }
     @PostMapping("/me/deleteYourBottle")
     @ResponseStatus(HttpStatus.OK)
-    public DeleteUserResponseDTO deleteYourBottle(@RequestBody @Validated DeleteCSBottleDTO body, @AuthenticationPrincipal User id) throws NotFoundException {
+    public DeleteCSBottleResponseDTO deleteYourBottle(@RequestBody @Validated DeleteCSBottleDTO body, @AuthenticationPrincipal User id) throws NotFoundException {
         return userService.deleteCustomBottle( id.getId(), body.bottleId());
     }
 
