@@ -10,10 +10,7 @@ import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleResponseDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartResponseDTO;
-import fedeCapiz.BaccArte0.payload.user.DeleteUserDTO;
-import fedeCapiz.BaccArte0.payload.user.DeleteUserResponseDTO;
-import fedeCapiz.BaccArte0.payload.user.UpdateUserInfoDTO;
-import fedeCapiz.BaccArte0.payload.user.UpdateUserInfoResponseDTO;
+import fedeCapiz.BaccArte0.payload.user.*;
 import fedeCapiz.BaccArte0.repositories.UserDAO;
 import fedeCapiz.BaccArte0.service.BottleService;
 import fedeCapiz.BaccArte0.service.UserService;
@@ -41,8 +38,8 @@ public class UserController {
     //salva il tuo logo
     @PostMapping("/me/saveImage")
     @ResponseStatus(HttpStatus.CREATED)
-    public String saveImage(@RequestParam("image") MultipartFile file, @AuthenticationPrincipal User id) throws IOException {
-        User found = userDAO.findById(id.getId()).orElseThrow(() -> new NotFoundException("User not found with id: " + id.getId()));
+    public String saveImage(@RequestParam("image") MultipartFile file, @AuthenticationPrincipal User user) throws IOException {
+        User found = userDAO.findById(user.getId()).orElseThrow(() -> new NotFoundException("User not found with id: " + user.getId()));
         Long userId = Long.valueOf(found.getId());
         return bottleService.saveImage(file, userId );
     }
@@ -70,12 +67,24 @@ public class UserController {
     public List<Bottle> getAllMyBottles(@AuthenticationPrincipal User user) {
         return bottleService.getAllMyBottles(user.getId());
     }
+    //metodo che mostra l'utente in sessione
+    @GetMapping("/me")
+    public User getUser(@AuthenticationPrincipal User user) {
+        return userService.findById(user.getId());
+    }
+    //get my cart
+    @GetMapping("/me/cart")
+    @ResponseStatus(HttpStatus.OK)
+    public GetMyCardResponseDTO getMyCart(@AuthenticationPrincipal User user) {
+        return userService.getMyCart(user.getId());
+    }
+
 
     // Aggiunge una bottiglia al carrello
     @PostMapping("/me/cart/addBottle")
     @ResponseStatus(HttpStatus.OK)
     public AddToCartResponseDTO addBottleToCart(@RequestBody AddToCartDTO body,@AuthenticationPrincipal User id) {
-        return userService.addBottleToCart(body, id.getId(), body.bottleId());
+        return userService.addBottleToCart(body, id.getId());
     }
     // metodo che elimina uno user
     @PatchMapping("/me/deleteAccount")

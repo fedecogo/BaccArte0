@@ -49,7 +49,7 @@ public class AuthService {
         newUser.setPassword(bcrypt.encode(body.password()));
         newUser.setAvatar("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTFKYn65xn1DBoxENqRfmw7gYoInFtNidmgEDJYfVSgg&s");
         newUser.setPhoneNumber(body.phoneNumber());
-        newUser.setTypeOfUser(TypeOfUser.ADMIN);
+        newUser.setTypeOfUser(TypeOfUser.USER);
         newUser.setAccountDeleted(false);
 
         // Salva il nuovo utente nel database

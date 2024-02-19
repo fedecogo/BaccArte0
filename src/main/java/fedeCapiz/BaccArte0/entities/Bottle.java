@@ -1,5 +1,6 @@
 package fedeCapiz.BaccArte0.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,7 @@ public class Bottle {
 
     //relazione con carrello
     @ManyToMany(mappedBy = "bottles")
+    @JsonIgnore
     private List<Cart> carts = new ArrayList<>();
 
 

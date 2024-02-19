@@ -9,6 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface BottleDAO extends JpaRepository<Bottle,Long> {
-
-    List<Bottle> findByUserId(Long userId);
-}
+        List<Bottle> findByUserIdAndIsCSDeletedFalse(Long userId);
+    }

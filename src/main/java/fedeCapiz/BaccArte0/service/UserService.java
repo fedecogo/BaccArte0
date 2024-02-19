@@ -8,10 +8,7 @@ import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleDTO;
 import fedeCapiz.BaccArte0.payload.bottle.NewCSBottleResponseDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartDTO;
 import fedeCapiz.BaccArte0.payload.cart.AddToCartResponseDTO;
-import fedeCapiz.BaccArte0.payload.user.DeleteUserDTO;
-import fedeCapiz.BaccArte0.payload.user.DeleteUserResponseDTO;
-import fedeCapiz.BaccArte0.payload.user.UpdateUserInfoDTO;
-import fedeCapiz.BaccArte0.payload.user.UpdateUserInfoResponseDTO;
+import fedeCapiz.BaccArte0.payload.user.*;
 import fedeCapiz.BaccArte0.repositories.BottleDAO;
 import fedeCapiz.BaccArte0.repositories.CartDAO;
 import fedeCapiz.BaccArte0.repositories.UserDAO;
@@ -92,10 +89,12 @@ public class UserService {
 
 
     //ADD BOTTLE TO CART
-    public AddToCartResponseDTO addBottleToCart(AddToCartDTO body, Long userId, Long bottleId) {
+    public AddToCartResponseDTO addBottleToCart(AddToCartDTO body, Long userId) {
         User user = userDAO.findById(userId).orElseThrow(() -> new NotFoundException("User not found with id : " + userId));
         Cart cart = user.getCart();
-        Bottle bottle = bottleDAO.findById(bottleId).orElseThrow(() -> new NotFoundException("Bottle not found with id: " + bottleId));
+        Bottle bottle = bottleDAO.findById(body.bottleId()).orElseThrow(() -> new NotFoundException("Bottle not found with id: " + body.bottleId()));
+
+
         //se la bottiglia è custom
         if (bottle.isCustom()) {
             //prezzo in base alla dimensione della bottiglia e al contenuto
@@ -105,7 +104,7 @@ public class UserService {
                     pricePerBottle = 5;
                 }
             } else if (bottle.getSizeBottle() == SizeBottle.SETTANTA_CL) {
-                if (bottle.getBottleContents() == BottleContents.RED_BERRY_GIN) {
+                if (bottle.getBottleContents() == BottleContents.RED_BERRY_GIN || bottle.getBottleContents() == BottleContents.ITALIAN_BOUQUET) {
                     pricePerBottle = 40;
                 }
             }
@@ -115,13 +114,16 @@ public class UserService {
             }
             cart.getBottles().addAll(bottlesToAdd);
             cart.setTotCartPrice(cart.getTotCartPrice() + (body.quantity() * pricePerBottle));
+
         } else {
             //se non è custum
             List<Bottle> bottlesToAdd = new ArrayList<>();
             for (int i = 0; i < body.quantity(); i++) {
                 bottlesToAdd.add(bottle);
             }
-            cart.getBottles().add(bottle);
+            cart.getBottles().addAll(bottlesToAdd);
+            cart.setTotCartPrice(cart.getTotCartPrice() + (body.quantity() * bottle.getPrice() ));
+
         }
         cartDAO.save(cart);
        return new AddToCartResponseDTO(cart.getTotCartPrice());
@@ -165,5 +167,12 @@ public class UserService {
         }
        userDAO.save(user);
         return new UpdateUserInfoResponseDTO("User info updated");
+    }
+
+    //get my cart
+    public GetMyCardResponseDTO getMyCart(Long id) throws NotFoundException {
+        User user = userDAO.findById(id).orElseThrow(() -> new NotFoundException("Utente non trovato con ID: " + id));
+        Cart cart = user.getCart();
+        return new GetMyCardResponseDTO(cart.getTotCartPrice(), cart.getBottles());
     }
 }
