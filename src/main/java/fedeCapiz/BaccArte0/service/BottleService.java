@@ -55,12 +55,23 @@ public class BottleService {
    String url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
    found.setAvatar(url);
    userDAO.save(found);
-   
+
   return url;
     }
+
+    //public stringa save image bottle
+  public String saveImageBottle (MultipartFile file) throws IOException {
+        String url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+        return url;
+  }
+
+
     public List<Bottle> getAllMyBottles(Long userId) {
         return bottleDAO.findByUserIdAndIsCSDeletedFalse(userId);
     }
+public List<Bottle> getAllBottles() {
+        return bottleDAO.findAll();
 
+}
 
 }

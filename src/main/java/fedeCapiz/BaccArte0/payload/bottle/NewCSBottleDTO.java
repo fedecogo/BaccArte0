@@ -13,7 +13,10 @@ public record NewCSBottleDTO(
         SizeBottle sizeBottle,
         @NotNull(message = "E' obbligatorio scegliere il distillato desiderato")
         BottleContents bottleContents,
-        Artist artist
+        @NotNull
+        Artist artist,
+        @NotEmpty(message = "Fornisci una foto della bottiglia è obbligatorio")
+        String bottigli_completa
 
 
 ) {

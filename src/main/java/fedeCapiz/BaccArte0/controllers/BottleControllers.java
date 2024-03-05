@@ -1,5 +1,6 @@
 package fedeCapiz.BaccArte0.controllers;
 
+import fedeCapiz.BaccArte0.entities.Bottle;
 import fedeCapiz.BaccArte0.entities.User;
 import fedeCapiz.BaccArte0.exceptions.BadRequestException;
 import fedeCapiz.BaccArte0.exceptions.NotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/bottles")
@@ -41,5 +43,13 @@ public class BottleControllers {
                 return bottleService.saveBottle(newBottleDTO);
             }
     }
+    // get tutte bottiglie custum
+    @GetMapping("/admin/getAllBottles")
+    @ResponseStatus(HttpStatus.OK)
+/*    @PreAuthorize("hasAuthority('ADMIN')")*/
+    public List<Bottle> getAllMyBottles(@AuthenticationPrincipal User user) {
+    return bottleService.getAllBottles();
+    }
+
 
 }

@@ -36,6 +36,7 @@ public class UserService {
     public User findById(long id) {
         return userDAO.findById(id).orElseThrow(() -> new NotFoundException("User not found with this id:" + id));
     }
+
     public User findByEmail(String email) throws NotFoundException {
         return userDAO.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found with this email:" + email));
     }
@@ -48,6 +49,7 @@ public class UserService {
         newBottle.setCSDeleted(false);
         newBottle.setSizeBottle(body.sizeBottle());
         newBottle.setBottleContents(body.bottleContents());
+        newBottle.setBottigliCompleta(body.bottigli_completa());
         if (newBottle.getSizeBottle() == SizeBottle.DIECI_CL) {
             if (newBottle.getBottleContents() == BottleContents.RED_BERRY_GIN) {
                 newBottle.setPrice(5);

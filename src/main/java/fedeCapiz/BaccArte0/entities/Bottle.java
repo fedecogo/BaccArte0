@@ -26,6 +26,7 @@ public class Bottle {
     @Enumerated(EnumType.STRING)
     private Artist artist;
     private double price;
+    @Column( columnDefinition = "text")
     private String bottigliCompleta;
     private String logoUser;
     private boolean isCustom;

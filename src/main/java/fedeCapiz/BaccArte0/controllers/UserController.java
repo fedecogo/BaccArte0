@@ -43,6 +43,14 @@ public class UserController {
         Long userId = Long.valueOf(found.getId());
         return bottleService.saveImage(file, userId );
     }
+    //salva immagine bottiglia custum completa pero su cludinary
+    @PostMapping("/me/saveImageBottle")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String saveImageBottle(@RequestParam("image") MultipartFile file, @AuthenticationPrincipal User user) throws IOException {
+        User found = userDAO.findById(user.getId()).orElseThrow(() -> new NotFoundException("User not found with id: " + user.getId()));
+        return bottleService.saveImageBottle(file);
+    }
+
     // crera una bottiglia custum con l'avatar
     @PostMapping("/me/createYourBottle")
     @ResponseStatus(HttpStatus.CREATED)
@@ -99,4 +107,12 @@ public class UserController {
         userService.updateUserInfo(user.getId(),body);
         return new UpdateUserInfoResponseDTO("Utente aggiornato correttamente1");
     }
+    //get all users
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+/*    @GetMapping("")*/
 }
